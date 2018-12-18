@@ -1,20 +1,17 @@
 # Copyright 2018 Theodore Pena
 # Licensed under the MIT License
 from __future__ import division, print_function
-
-# This is a (hopefully) short program to make a 2D grid,
-# in which a N-by-M game of life will be played.
-# Edges will wrap! (eventually...)
 import sys
 import numpy as np
 import matplotlib.pyplot as plt
+import time
 from matplotlib import animation
+# This is a (hopefully) short program to make a and seed a 2D grid,
+# in which a N-by-M game of life will be played.
 
 
-# Now we'll define the classes that we'll use...
-
-# This is the Grid class. Within it are all the functions required for playing
-# the Game.
+# We start with our classes. This class is the Grid object, which handles the
+# rules and board of the Game.
 class Grid(object):
     def __init__(self, len_x, len_y):
         self.grid = np.zeros((len_x, len_y), dtype=int)
@@ -23,9 +20,11 @@ class Grid(object):
         if self.grid.ndim == 2:
             return np.shape(self.grid)
         elif self.grid.ndim == 0:
-            print("ERROR! You can't find the shape of a 0 dimensional array!")
+            print("Somehow, you've defined a zero dimensional array.")
+            print("This is a problem.\n")
+            return 0
         else:
-            print("UNDER CONSTRUCTION")
+            sys.exit("N-D variant to come.\n")
 
     def neighbors(self, x, y):
         top_left = self.grid[x - 1, y - 1]
@@ -76,7 +75,7 @@ class Grid(object):
                     elif self.neighbors(i, t) > 3:
                         _temp_grid[i, t] = 0
         # Now we set the temp grid to be the actual grid.
-        # We did this so the entire grid is updated at once.
+        # We do this so the entire grid is updated at once.
         self.grid = _temp_grid
 
     def play_game_on_term(self, num_iterations):
@@ -107,7 +106,7 @@ class Grid(object):
                                         interval=200, blit=True)
         mywriter = animation.FFMpegWriter(fps=7, extra_args=['-vcodec',
                                                              'libx264'])
-        anime.save('Your Game of Life simulaton!.mp4',
+        anime.save('simulation ' + time.asctime + '.mp4',
                    writer=mywriter)
         print()
         print("All done! Check your root directory, " +
@@ -118,7 +117,7 @@ class Grid(object):
 
 # This function handles the terminal-based UI.
 def two_d_ui():
-    usr_input_list = [-1, -1, -1, -1]
+    usr_input_list = [-1, -1, -1, -1, -1]
     print(welcome)
     print(main_menu)
     input = raw_input("Please input an option:\n")
@@ -200,24 +199,27 @@ def mistake_check(usr_inputs):
         elif IsUserSure in ["No", "nope", "N", "n", "Nope", "nope"]:
             sys.exit("Oh, okay. Well, since you didn't want to run "
                      + "a {0}x{1} grid,\n".format(usr_inputs[0], usr_inputs[1])
-                     + 'remember that you set the dimensions of the grid with '
-                     + 'command-line arguments.\nAs an example,'
+                     + 'remember that you can set the dimensions of the grid '
+                     + 'with command-line arguments.\nAs an example,'
                      + ' "python 2DScript.py  3 8" woudld create'
                      + ' a 3x8 grid.\n')
         IsUserSure = raw_input("(Y/N)\n")
 
 
-welcome = ("\n=================2D GAME OF LIFE=================\n"
+welcome = ("=================2D GAME OF LIFE=================\n"
            "Welcome the 2D implenetation of the Game of Life!\n"
            "Menu is below.\n")
 
 main_menu = ("1: Play the game.\n" "2: Exit the program.\n")
 
-menu_anime = ("\nOne last menu! Pick how you want your Game visualized:\n"
+menu_anime = ("Now, pick how you want your Game visualized:\n"
               "1: Create a .mp4 movie in the local directory.\n"
               "2: Display the array here on the terminal.\n")
 
-instructions_size = ("\nAlright. Let's start by determining the size of your"
+menu_seed = ("Finally, pick your seed.\n"
+             "1. ")
+
+instructions_size = ("Alright. Let's start by determining the size of your"
                      "\ngrid. You must enter two integers.\n"
                      "The first will be the height of your grid (number of "
                      "rows).\nThe second will be the width of "
@@ -227,6 +229,13 @@ instructions_size = ("\nAlright. Let's start by determining the size of your"
 instructions_ticks = ("\nGreat. How many iterations (or ticks)\n"
                       "of the Game do you want to play?\n")
 
+
+instructions_seed = ("\nCool. Next, pick your starting seed.\n")
+
+
+seed_option1 = ("1. Single glider -- nothing special here.\n")
+seed_option2 = ("\n2. Diehard, a seed which will dissapear after 130 ticks.")
+seed_option3 = ("")
 
 error_message_value = (
                  '\nError!! All command-line arguments must be integers!!\n'
@@ -241,19 +250,19 @@ error_message_index = (
                  'command-line arguments.\nAs an example, '
                  '"python 2DScript.py 3 8" woudld create a 3x8 grid.')
 #
-"""EXPLAIN THAT usr_input = [grid_rows, grid_columns, ticks, anime]"""
+"""EXPLAIN THAT usr_input = [grid_rows, grid_columns, ticks, anime, seed]"""
 #
 
 
-# And then run the program:
+# And then we have the actual program:
 
 
 if __name__ == "__main__":
 
     # First, we'll check if the user used the command line for input.
-    if len(sys.argv) == 5:
+    if len(sys.argv) == 6:
         try:
-            usr_inputs = np.array([-1, -1, -1, -1])
+            usr_inputs = np.array([-1, -1, -1, -1, -1])
             for i in np.arange(1, 5, 1):
                 usr_inputs[i - 1] = int(sys.argv[i])
         except ValueError:
@@ -282,8 +291,7 @@ if __name__ == "__main__":
         try:
             gol_grid.play_game_on_term(usr_inputs[2])
         except ValueError:
-            sys.exit("Uh oh, something went wrong. Please email the creator\n"
-                     "of this program at 'theodore.pena(at)tufts.edu'")
+            sys.exit("Uh oh, something went wrong.")
 
     # Here we define a function for the animation capabilites.
     # This function is required for animate_game(). It tells matplotlib
