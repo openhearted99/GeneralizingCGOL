@@ -19,4 +19,3 @@ class Space(object):
 
 if __name__ == '__main__':
     grid = Space(3, 3, 3)
-    print(grid)
