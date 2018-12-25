@@ -291,11 +291,7 @@ if __name__ == "__main__":
         try:
             gol_grid.play_game_on_term(usr_inputs[2])
         except ValueError:
-<<<<<<< HEAD
             sys.exit("Uh oh, something went wrong.")
-=======
-            sys.exit("Uh oh, something went wrong")
->>>>>>> refs/remotes/origin/master
 
     # Here we define a function for the animation capabilites.
     # This function is required for animate_game(). It tells matplotlib
