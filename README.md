@@ -1,2 +1,2 @@
 # GeneralizingCGOL
-Project to generalize Conway's Game of Life to N dimensions.
+A passion project from some undergaduates with too much time on their hands.
