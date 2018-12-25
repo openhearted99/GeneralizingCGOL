@@ -38,16 +38,21 @@ class Space(object):
     def print_space(self):
         print(self.space)
 
-    # Seeds the gamespace by randomlly filling in sqrt(n) of the total cells,
-    # where n is the number of total cells.
+    # Seeds the gamespace by randomlly filling in 1% of the total cells.
     def seed_grid(self):
-        num_entries2seed = randint(0, round(np.sqrt(self.space.size)))
+        num_entries2seed = randint(0, round(self.space.size*.01))
         for i in range(num_entries2seed):
-            random_cell_coordinates = []
-            for j in range(self.space.ndim):
-                random_cell_coordinates.append(randint(0,
-                                               self.space.shape[j]-1))
-            self.space[tuple(random_cell_coordinates)] = 1
+            while True:
+                random_cell_coordinates = []
+                for j in range(self.space.ndim):
+                    random_cell_coordinates.append(randint(0,
+                                                           self.space.shape[j]
+                                                           - 1))
+                    if self.space[tuple(random_cell_coordinates)] == 1:
+                        continue
+                    elif self.space[tuple(random_cell_coordinates)] == 0:
+                        self.space[tuple(random_cell_coordinates)] = 1
+                        break
 
 
 if __name__ == '__main__':
